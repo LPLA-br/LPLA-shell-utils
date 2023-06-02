@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Contador regressivo de tempo
 # Requer: mplayer
@@ -14,5 +14,5 @@ else
 			sleep 1s;
 		done	
 	done
-	mplayer /home/luiz/Smartphone/1LUIZ/Música/Outros/Nordestinados.m4a
+	mplayer $(cat ~/alarme.conf)
 fi
