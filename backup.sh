@@ -1,16 +1,47 @@
 #!/bin/bash
 
-# backup para dispositivo específico
+# backup semi-automático para dispositivo usb específico
 # requer: rync
 
-EXTRA='/home/luiz/Desktop/bootcamp'
+EXTRA=$1;
 
-if [[ $(lsblk -o NAME,UUID | grep 'cd474226' | awk '(FS=" "){print $2}') == "cd474226-87e7-4bac-a386-7e07cc59223f" ]]; then
-	if [[ -d $A ]]; then
-		rsync -avh --delete --exclude 'node_modules' /home/luiz/{Documentos,Imagens,Modelos,src,Smartphone} $EXTRA /mnt/luiz/
+ORIGEM=$( echo /home/luiz/{Documentos,Imagens,Modelos,src,Smartphone} );
+DESTINO='/mnt/luiz/';
+
+UUID_REQUERIDO='cd474226-87e7-4bac-a386-7e07cc59223f';
+UUID_DISPOSITIVO=$( lsblk -o NAME,UUID | grep 'cd474226' | awk '(FS=" "){print $2}' );
+
+if [[ $UUID_DISPOSITIVO == $UUID_REQUERIDO ]]; then
+	if [[ -d $EXTRA ]]; then
+		rsync --recursive \
+		      --verbose \
+		      --human-readable \
+		      --links \
+		      --perms \
+		      --times \
+		      --group \
+		      --owner \
+		      --delete \
+		      --exclude 'node_modules' \
+		      --exclude '.git' \
+		      $EXTRA \
+		      $ORIGEM \
+		      $DESTINO ;
 	else
-		rsync -avh --delete --exclude 'node_modules' /home/luiz/{Documentos,Imagens,Modelos,src,Smartphone} /mnt/luiz/
+		rsync --recursive \
+		      --verbose \
+		      --human-readable \
+		      --links \
+		      --perms \
+		      --times \
+		      --group \
+		      --owner \
+		      --delete \
+		      --exclude 'node_modules' \
+		      --exclude '.git' \
+		      $ORIGEM \
+		      $DESTINO ;
 	fi
 else
-	echo 'dispositivo não é o pendrive de backup';
+	echo 'BACKUP NEGADO: dispositivo não é o de backup';
 fi
